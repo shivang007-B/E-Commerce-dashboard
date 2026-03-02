@@ -4,9 +4,8 @@ import { useCartStore } from "@/store/useCartStore";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { FiCheckCircle, FiLock, FiCreditCard } from "react-icons/fi";
 
-export default function CheckoutPage() {
+export default function MissionCheckout() {
     const { items, getCartTotal, clearCart } = useCartStore();
     const [isClient, setIsClient] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
@@ -36,7 +35,7 @@ export default function CheckoutPage() {
         e.preventDefault();
 
         if (!session) {
-            alert("Please log in to place an order.");
+            alert("Please log in to initiate mission (checkout).");
             router.push("/login");
             return;
         }
@@ -45,7 +44,7 @@ export default function CheckoutPage() {
 
         const res = await loadRazorpayScript();
         if (!res) {
-            alert("Razorpay SDK failed to load. Please check your connection.");
+            alert("System Error: Razorpay Uplink Failed. Check network connection.");
             setIsProcessing(false);
             return;
         }
@@ -59,9 +58,9 @@ export default function CheckoutPage() {
                     items,
                     totalAmount: getCartTotal(),
                     shippingAddress: {
-                        street: "", // Will grab from form in real implementation
-                        city: "",
-                        postalCode: ""
+                        street: "Sector 7G",
+                        city: "Neo Tokyo",
+                        postalCode: "100000"
                     }
                 })
             });
@@ -72,11 +71,11 @@ export default function CheckoutPage() {
 
             // 2. Initialize Razorpay
             const options = {
-                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "rzp_test_fallback",
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID as string,
                 amount: data.amount,
                 currency: data.currency,
-                name: "ShopNova Premium",
-                description: "Purchase of Premium Lifestyle Products",
+                name: "SHOPNOVA: Gear Up",
+                description: "Acquisition of Tactical Equipment",
                 order_id: data.orderId,
                 handler: async function (response: any) {
                     try {
@@ -99,31 +98,31 @@ export default function CheckoutPage() {
                             setIsSuccess(true);
                             clearCart();
                         } else {
-                            alert("Payment verification failed: " + verifyData.message);
+                            alert("Uplink Verification Failed: " + verifyData.message);
                         }
                     } catch (err: any) {
-                        alert("Error verifying payment");
+                        alert("Error securing connection during verification.");
                         console.error(err);
                     }
                 },
                 prefill: {
-                    name: session.user?.name || "Customer",
-                    email: session.user?.email || "customer@example.com",
+                    name: session.user?.name || "Operative",
+                    email: session.user?.email || "operative@shopnova.com",
                 },
                 theme: {
-                    color: "#0f172a"
+                    color: "#00f2ff" // Neon Cyan Razorpay UI
                 }
             };
 
             const paymentObject = new (window as any).Razorpay(options);
             paymentObject.on("payment.failed", function (response: any) {
-                alert("Payment failed. Please try again.");
+                alert("Mission Failed: Funds Transfer Unsuccessful.");
                 console.error(response.error);
             });
             paymentObject.open();
 
         } catch (error: any) {
-            alert(error.message || "Something went wrong during checkout.");
+            alert(error.message || "System error during checkout initiation.");
             console.error(error);
         } finally {
             setIsProcessing(false);
@@ -134,20 +133,23 @@ export default function CheckoutPage() {
 
     if (isSuccess) {
         return (
-            <div className="flex-grow flex items-center justify-center py-20 px-6 animate-in zoom-in duration-500">
-                <div className="bg-white p-12 rounded-3xl shadow-hover max-w-lg w-full text-center border border-border">
-                    <div className="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-8">
-                        <FiCheckCircle size={48} />
+            <div className="flex-grow flex items-center justify-center min-h-[70vh] px-6">
+                <div className="bg-black/80 backdrop-blur-xl p-12 rounded-xl shadow-[0_0_30px_var(--neon-cyan)] max-w-lg w-full text-center border-2 border-[var(--neon-cyan)] relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--neon-cyan)]/10 to-transparent h-2 w-full animate-scanline pointer-events-none" />
+
+                    <div className="w-24 h-24 border border-[var(--neon-cyan)] text-[var(--neon-cyan)] rounded-full flex items-center justify-center mx-auto mb-8 shadow-[0_0_15px_var(--neon-cyan)]">
+                        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
-                    <h1 className="text-3xl font-bold text-primary mb-4">Payment Successful!</h1>
-                    <p className="text-secondary mb-8 leading-relaxed">
-                        Thank you for shopping with ShopNova. Your premium lifestyle products are on their way. Order #SN-{orderId || Math.floor(100000 + Math.random() * 900000)}
+                    <h1 className="text-3xl font-black italic uppercase text-white mb-4">Transmission Secure</h1>
+                    <p className="font-mono text-zinc-400 uppercase text-sm mb-8 leading-relaxed">
+                        Credits Transferred. Logistics dispatched.<br />
+                        Track Order: <span className="text-[var(--neon-cyan)]">#ORD-{orderId || "HACKED"}</span>
                     </p>
                     <button
                         onClick={() => router.push("/")}
-                        className="bg-primary text-white font-semibold px-8 py-4 rounded-xl hover:bg-gray-800 transition-colors w-full"
+                        className="w-full bg-[var(--neon-cyan)] text-black font-black py-4 uppercase tracking-[0.2em] hover:bg-white transition-colors"
                     >
-                        Continue Shopping
+                        Return to Base
                     </button>
                 </div>
             </div>
@@ -155,142 +157,71 @@ export default function CheckoutPage() {
     }
 
     return (
-        <div className="container mx-auto px-6 py-12 flex-grow">
-            <h1 className="text-3xl font-bold text-primary mb-8">Secure Checkout</h1>
+        <div className="min-h-screen bg-[#050505] py-20 px-6 font-mono text-white pt-32">
+            <div className="max-w-2xl mx-auto relative">
+                {/* Decorative Cyber Grid BG */}
+                <div className="absolute inset-0 bg-[linear-gradient(rgba(0,242,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,242,255,0.03)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none -z-10 opacity-30"></div>
 
-            <div className="lg:grid lg:grid-cols-12 gap-12 items-start">
-                {/* Checkout Form */}
-                <div className="lg:col-span-7 bg-white p-8 rounded-2xl shadow-sm border border-border mb-8 lg:mb-0 animate-in fade-in slide-in-from-left-4">
-                    <form onSubmit={handleRazorpayPayment}>
-                        {/* Contact Info */}
-                        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm">1</span>
-                            Contact Information
-                        </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                            <div>
-                                <label className="block text-sm font-medium text-primary mb-1 pl-1">First Name</label>
-                                <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="Aditya" />
-                            </div>
-                            <div>
-                                <label className="block text-sm font-medium text-primary mb-1 pl-1">Last Name</label>
-                                <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="Sharma" />
-                            </div>
-                            <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-primary mb-1 pl-1">Email Address</label>
-                                <input required type="email" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="aditya@example.com" />
+                <div className="mb-10 text-center">
+                    <h2 className="text-4xl font-black text-white italic tracking-tighter uppercase relative z-10">Mission Briefing</h2>
+                    <div className="h-1 w-24 bg-[var(--neon-cyan)] mx-auto mt-4 shadow-[0_0_10px_var(--neon-cyan)]" />
+                </div>
+
+                <div className="space-y-4 bg-zinc-900/80 p-8 border border-[var(--neon-cyan)]/30 rounded-sm backdrop-blur-xl relative overflow-hidden group">
+                    {/* Scanline Effect inside Card */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--neon-cyan)]/5 to-transparent h-1 w-full animate-scanline pointer-events-none" />
+
+                    {/* Top Right Corner Accent */}
+                    <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-[var(--neon-cyan)] transition-transform group-hover:scale-110" />
+
+                    <form onSubmit={handleRazorpayPayment} className="relative z-10">
+                        <div className="border-b border-white/10 pb-6 mb-6">
+                            <p className="text-[10px] uppercase tracking-[0.3em] text-[var(--neon-cyan)] mb-4">Tactical Inventory (Cart)</p>
+                            <div className="space-y-3 max-h-[30vh] overflow-y-auto pr-2 custom-scrollbar">
+                                {items.map((item) => (
+                                    <div key={item.id} className="flex justify-between items-center text-sm font-mono bg-white/5 p-3 rounded">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-10 h-10 bg-black border border-white/10 rounded overflow-hidden">
+                                                <img src={item.image} alt={item.name} className="w-full h-full object-cover opacity-80" />
+                                            </div>
+                                            <span className="text-zinc-300 line-clamp-1 max-w-[200px]">{item.name} <span className="text-[var(--neon-pink)]">x{item.quantity}</span></span>
+                                        </div>
+                                        <span className="text-[var(--neon-cyan)] font-bold">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        <hr className="border-border mb-8" />
-
-                        {/* Shipping Info */}
-                        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm">2</span>
-                            Shipping Address
-                        </h2>
-                        <div className="grid grid-cols-1 gap-4 mb-8">
-                            <div>
-                                <label className="block text-sm font-medium text-primary mb-1 pl-1">Street Address</label>
-                                <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="123 Premium Lane" />
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-primary mb-1 pl-1">City</label>
-                                    <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="Mumbai" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-primary mb-1 pl-1">Postal Code</label>
-                                    <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="400001" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr className="border-border mb-8" />
-
-                        {/* Payment Info */}
-                        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                            <span className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm">3</span>
-                            Payment Details
-                        </h2>
-                        <div className="bg-bg-secondary p-6 rounded-xl border border-border mb-8">
-                            <div className="flex items-center gap-3 mb-6 text-primary font-semibold">
-                                <FiCreditCard size={24} />
-                                <span>Credit / Debit Card (Demo)</span>
-                            </div>
-                            <div className="space-y-4">
-                                <div>
-                                    <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none font-mono text-primary" placeholder="Card Number (0000 0000 0000 0000)" />
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="MM/YY" />
-                                    <input required type="text" className="w-full px-4 py-3 border border-border rounded-xl focus:ring-2 focus:ring-accent outline-none text-primary" placeholder="CVC" />
-                                </div>
-                            </div>
+                        <div className="flex justify-between items-center py-4 mb-6 bg-black/50 p-4 border border-white/5 rounded">
+                            <span className="text-lg font-black uppercase text-zinc-400">Total Credits Required</span>
+                            <span className="text-3xl font-black text-[var(--neon-pink)] drop-shadow-[0_0_10px_rgba(255,0,122,0.5)]">
+                                ₹{getCartTotal().toLocaleString('en-IN')}
+                            </span>
                         </div>
 
                         <button
                             type="submit"
                             disabled={isProcessing}
-                            className="w-full bg-primary hover:bg-gray-800 text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-3 shadow-md disabled:bg-gray-400 disabled:cursor-wait"
+                            className={`w-full bg-[var(--neon-cyan)] text-black font-black py-5 text-lg uppercase tracking-[0.2em] relative transition-all duration-300 ${isProcessing ? 'opacity-50 cursor-wait' : 'hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_var(--neon-cyan)] hover:bg-white'} `}
+                            style={{ clipPath: 'polygon(5% 0, 100% 0, 100% 70%, 95% 100%, 0 100%, 0 30%)' }}
                         >
                             {isProcessing ? (
-                                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                <span className="flex items-center justify-center gap-3">
+                                    <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
+                                    ESTABLISHING SECURE COMMS...
+                                </span>
                             ) : (
-                                <>
-                                    <FiLock />
-                                    <span>Pay Securely with Razorpay (₹{getCartTotal().toLocaleString('en-IN')})</span>
-                                </>
+                                "Confirm Tactical Drop & Pay"
                             )}
                         </button>
+
+                        <div className="mt-6 border-t border-white/5 pt-4 text-center">
+                            <p className="text-[10px] text-zinc-600 uppercase flex items-center justify-center gap-2">
+                                <svg className="w-3 h-3 text-[var(--neon-cyan)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                                Encrypted Payload via Razorpay Secure Terminal // 256-Bit Protection
+                            </p>
+                        </div>
                     </form>
-                </div>
-
-                {/* Order Summary Sidebar */}
-                <div className="lg:col-span-5 bg-bg-secondary p-8 rounded-2xl border border-border sticky top-28 animate-in fade-in slide-in-from-right-4">
-                    <h2 className="text-xl font-bold mb-6">In Your Cart</h2>
-
-                    <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
-                        {items.map(item => (
-                            <div key={item.id} className="flex gap-4 items-center">
-                                <div
-                                    className="w-16 h-16 rounded-lg bg-white border border-border bg-cover bg-center flex-shrink-0 relative"
-                                    style={{ backgroundImage: `url(${item.image})` }}
-                                >
-                                    <span className="absolute -top-2 -right-2 bg-secondary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                                        {item.quantity}
-                                    </span>
-                                </div>
-                                <div className="flex-grow">
-                                    <h4 className="text-sm font-semibold text-primary line-clamp-1">{item.name}</h4>
-                                    <p className="text-xs text-secondary">{item.category}</p>
-                                </div>
-                                <div className="font-semibold text-primary">
-                                    ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="border-t border-border pt-6 space-y-3 text-sm">
-                        <div className="flex justify-between text-secondary">
-                            <span>Subtotal</span>
-                            <span className="font-medium text-primary">₹{getCartTotal().toLocaleString('en-IN')}</span>
-                        </div>
-                        <div className="flex justify-between text-secondary">
-                            <span>Shipping</span>
-                            <span className="font-medium text-green-600">Free</span>
-                        </div>
-                        <div className="flex justify-between text-secondary">
-                            <span>Taxes</span>
-                            <span className="font-medium text-primary">₹0</span>
-                        </div>
-
-                        <div className="border-t border-border pt-4 mt-4 flex justify-between items-center">
-                            <span className="font-bold text-lg">Total</span>
-                            <span className="font-bold text-2xl text-primary">₹{getCartTotal().toLocaleString('en-IN')}</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

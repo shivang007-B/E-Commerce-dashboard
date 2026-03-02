@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import connectToDatabase from "@/lib/mongodb";
+import dbConnect from "@/lib/db";
 import Order from "@/models/Order";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
@@ -12,7 +12,7 @@ export async function GET(req: Request) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
 
-        await connectToDatabase();
+        await dbConnect();
 
         // Fetch orders for the logged-in user
         const orders = await Order.find({ userId: (session.user as any).id })

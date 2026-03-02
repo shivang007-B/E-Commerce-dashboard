@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import connectToDatabase from "@/lib/mongodb";
+import dbConnect from "@/lib/db";
 import Order from "@/models/Order";
 import crypto from "crypto";
 
@@ -7,7 +7,11 @@ export async function POST(req: Request) {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, dbOrderId } = await req.json();
 
-        const secret = process.env.RAZORPAY_KEY_SECRET || "fallback_secret";
+        const secret = process.env.RAZORPAY_KEY_SECRET;
+
+        if (!secret) {
+            throw new Error("Missing RAZORPAY_KEY_SECRET environment variable");
+        }
 
         // 1. Verify Signature using SHA256 HMAC
         const generated_signature = crypto
@@ -17,13 +21,13 @@ export async function POST(req: Request) {
 
         if (generated_signature !== razorpay_signature) {
             // Payment tampering detected
-            await connectToDatabase();
+            await dbConnect();
             await Order.findByIdAndUpdate(dbOrderId, { paymentStatus: "failed", paymentId: razorpay_payment_id });
             return NextResponse.json({ message: "Invalid payment signature" }, { status: 400 });
         }
 
         // 2. Payment Verified - Update Order in Database
-        await connectToDatabase();
+        await dbConnect();
 
         const updatedOrder = await Order.findByIdAndUpdate(
             dbOrderId,

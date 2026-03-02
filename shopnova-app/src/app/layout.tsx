@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Providers from "@/components/Providers";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: 'ShopNova - Modern E-Commerce',
-  description: 'Your one-stop shop for everything you need with a premium experience.',
+  title: 'SHOPNOVA | Gear Up',
+  description: 'Equip the latest tech. Dominate the digital realm.',
 };
 
 export default function RootLayout({
@@ -19,10 +20,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex flex-col min-h-screen bg-white text-black`}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans flex flex-col min-h-screen bg-[var(--gaming-bg)] text-white antialiased`}>
         <Providers>
           <Navbar />
-          <main className="flex-grow pt-[140px] md:pt-[130px]">
+          <main className="flex-grow pt-[100px]">
             {children}
           </main>
           <Footer />

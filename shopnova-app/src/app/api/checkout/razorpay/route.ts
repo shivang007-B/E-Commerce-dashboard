@@ -1,14 +1,11 @@
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
-import connectToDatabase from "@/lib/mongodb";
+import dbConnect from "@/lib/db";
 import Order from "@/models/Order";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_fallback",
-    key_secret: process.env.RAZORPAY_KEY_SECRET || "fallback_secret",
-});
+
 
 export async function POST(req: Request) {
     try {
@@ -23,7 +20,12 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "Cart is empty" }, { status: 400 });
         }
 
-        await connectToDatabase();
+        await dbConnect();
+
+        const razorpay = new Razorpay({
+            key_id: process.env.RAZORPAY_KEY_ID as string,
+            key_secret: process.env.RAZORPAY_KEY_SECRET as string,
+        });
 
         // 1. Create a Razorpay Order
         // amount in subunits (paise for INR)

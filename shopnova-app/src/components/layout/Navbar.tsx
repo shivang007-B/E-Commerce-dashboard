@@ -32,9 +32,9 @@ export default function Navbar() {
     ];
 
     return (
-        <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border shadow-sm">
+        <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl text-white">
             {/* Top Bar */}
-            <div className="bg-black text-white text-xs py-3">
+            <div className="bg-[#050505] text-[var(--neon-cyan)] text-xs py-2 border-b border-white/5">
                 <div className="container mx-auto px-6 flex justify-between items-center">
                     <div className="flex-1 flex justify-center items-center gap-2">
                         <span>Summer Sale For All Swim Suits And Free Express Delivery - OFF 50%!</span>
@@ -52,17 +52,17 @@ export default function Navbar() {
             {/* Main Navbar */}
             <div className="container mx-auto px-6 py-4 flex items-center justify-between mt-2 mb-2">
                 {/* Logo */}
-                <Link href="/" className="text-2xl font-bold tracking-tight text-primary">
-                    SHVshop
+                <Link href="/" className="text-2xl font-black tracking-tighter uppercase italic">
+                    SHOP<span className="gaming-gradient-text">NOVA</span>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center gap-8">
-                    <Link href="/" className={`text-base font-medium transition-colors hover:text-gray-600 ${pathname === '/' ? 'underline underline-offset-4 decoration-2' : ''}`}>Home</Link>
-                    <Link href="/#contact" className={`text-base font-medium transition-colors hover:text-gray-600 ${pathname === '/contact' ? 'underline underline-offset-4 decoration-2' : ''}`}>Contact</Link>
-                    <Link href="/#about" className={`text-base font-medium transition-colors hover:text-gray-600 ${pathname === '/about' ? 'underline underline-offset-4 decoration-2' : ''}`}>About</Link>
+                <nav className="hidden md:flex items-center gap-8 font-mono text-sm uppercase tracking-widest text-zinc-300">
+                    <Link href="/" className={`hover:text-[var(--neon-cyan)] transition-colors ${pathname === '/' ? 'text-[var(--neon-cyan)]' : ''}`}>Home</Link>
+                    <Link href="/#contact" className={`hover:text-[var(--neon-cyan)] transition-colors ${pathname === '/contact' ? 'text-[var(--neon-cyan)]' : ''}`}>Contact</Link>
+                    <Link href="/#about" className={`hover:text-[var(--neon-cyan)] transition-colors ${pathname === '/about' ? 'text-[var(--neon-cyan)]' : ''}`}>About</Link>
                     {!session && (
-                        <Link href="/signup" className={`text-base font-medium transition-colors hover:text-gray-600 ${pathname === '/signup' ? 'underline underline-offset-4 decoration-2' : ''}`}>Sign Up</Link>
+                        <Link href="/signup" className={`hover:text-[var(--neon-purple)] transition-colors ${pathname === '/signup' ? 'text-[var(--neon-purple)]' : ''}`}>Login / Spawn</Link>
                     )}
                 </nav>
 
@@ -108,34 +108,35 @@ export default function Navbar() {
                         </div>
                     )}
 
-                    {/* Mobile Menu Toggle */}
-                    <button
-                        className="md:hidden text-primary"
-                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    >
-                        {mobileMenuOpen ? <FiX size={26} /> : <FiMenu size={26} />}
-                    </button>
                 </div>
+
+                {/* Mobile Menu Toggle */}
+                <button
+                    className="md:hidden text-white hover:text-[var(--neon-cyan)] transition-colors"
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                    {mobileMenuOpen ? <FiX size={26} /> : <FiMenu size={26} />}
+                </button>
             </div>
 
             {/* Mobile Menu Overlay */}
             {mobileMenuOpen && (
-                <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-border shadow-soft animate-in slide-in-from-top-2">
-                    <div className="flex flex-col p-6 gap-4">
-                        <Link href="/" onClick={() => setMobileMenuOpen(false)} className={`text-base font-medium ${pathname === '/' ? 'text-primary underline' : 'text-secondary'}`}>Home</Link>
-                        <Link href="/#contact" onClick={() => setMobileMenuOpen(false)} className={`text-base font-medium ${pathname === '/contact' ? 'text-primary underline' : 'text-secondary'}`}>Contact</Link>
-                        <Link href="/#about" onClick={() => setMobileMenuOpen(false)} className={`text-base font-medium ${pathname === '/about' ? 'text-primary underline' : 'text-secondary'}`}>About</Link>
-                        <hr className="border-border my-2" />
+                <div className="md:hidden absolute top-full left-0 right-0 bg-[#0a0a0c] border-b border-white/10 shadow-lg animate-in slide-in-from-top-2">
+                    <div className="flex flex-col p-6 gap-4 font-mono uppercase tracking-widest text-sm text-zinc-300">
+                        <Link href="/" onClick={() => setMobileMenuOpen(false)} className={`hover:text-[var(--neon-cyan)] ${pathname === '/' ? 'text-[var(--neon-cyan)]' : ''}`}>Home</Link>
+                        <Link href="/#contact" onClick={() => setMobileMenuOpen(false)} className={`hover:text-[var(--neon-cyan)] ${pathname === '/contact' ? 'text-[var(--neon-cyan)]' : ''}`}>Contact</Link>
+                        <Link href="/#about" onClick={() => setMobileMenuOpen(false)} className={`hover:text-[var(--neon-cyan)] ${pathname === '/about' ? 'text-[var(--neon-cyan)]' : ''}`}>About</Link>
+                        <hr className="border-white/10 my-2" />
 
                         {session ? (
-                            <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 bg-gray-200 text-black px-5 py-3 rounded-xl font-medium">
+                            <button onClick={() => { signOut(); setMobileMenuOpen(false); }} className="flex items-center justify-center gap-2 bg-red-900/50 text-red-400 hover:bg-red-900 hover:text-red-300 border border-red-900/50 px-5 py-3 rounded-md transition-colors">
                                 <FiLogOut />
                                 <span>Logout</span>
                             </button>
                         ) : (
-                            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 bg-primary text-white px-5 py-3 rounded-xl font-medium">
+                            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-center gap-2 bg-[var(--neon-purple)]/20 text-[var(--neon-purple)] border border-[var(--neon-purple)]/30 hover:bg-[var(--neon-purple)]/30 px-5 py-3 rounded-md transition-colors">
                                 <FiUser />
-                                <span>Sign Up / Login</span>
+                                <span>Spawn / Login</span>
                             </Link>
                         )}
                     </div>

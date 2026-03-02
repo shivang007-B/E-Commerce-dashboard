@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import connectToDatabase from "@/lib/mongodb";
+import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import bcrypt from "bcryptjs";
 
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "Password must be at least 6 characters" }, { status: 400 });
         }
 
-        await connectToDatabase();
+        await dbConnect();
 
         const userExists = await User.findOne({ email });
         if (userExists) {
