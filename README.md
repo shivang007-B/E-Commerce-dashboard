@@ -15,8 +15,10 @@
 
 | 🛡️ THE ARMORY (Home) | 🎒 TACTICAL LOADOUT (Cart) |
 | :--- | :--- |
-| ![Homepage Preview](https://via.placeholder.com/600x400/0a0a0c/00f2ff?text=ShopNova+Home+HUD) | ![Cart Preview](https://via.placeholder.com/600x400/0a0a0c/ff007a?text=Tactical+Loadout+Inventory) |
-| **Sector:** [Main Storefront](https://e-commerce-dashboard-theta-six.vercel.app/) | **Sector:** [User Inventory](https://e-commerce-dashboard-theta-six.vercel.app/cart) |
+| ![Homepage Preview](<img width="1286" height="691" alt="image" src="https://github.com/user-attachments/assets/09ccb215-5156-48f6-a576-18b5a6f9f906" />
+) | ![Cart Preview](<img width="1307" height="688" alt="image" src="https://github.com/user-attachments/assets/b598f26c-2fe9-42b3-9f63-12f8f6859b7c" />
+) |
+
 
 ---
 
