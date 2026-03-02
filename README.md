@@ -15,9 +15,9 @@
 
 | 🛡️ THE ARMORY (Home) | 🎒 TACTICAL LOADOUT (Cart) |
 | :--- | :--- |
-| ![Homepage Preview](<img width="1286" height="691" alt="image" src="https://github.com/user-attachments/assets/09ccb215-5156-48f6-a576-18b5a6f9f906" />
-) | ![Cart Preview](<img width="1307" height="688" alt="image" src="https://github.com/user-attachments/assets/b598f26c-2fe9-42b3-9f63-12f8f6859b7c" />
-) |
+| Homepage Preview(<img width="1286" height="691" alt="image" src="https://github.com/user-attachments/assets/09ccb215-5156-48f6-a576-18b5a6f9f906" />
+) |Cart Preview(<img width="1307" height="688" alt="image" src="https://github.com/user-attachments/assets/b598f26c-2fe9-42b3-9f63-12f8f6859b7c" />
+)|
 
 
 ---
