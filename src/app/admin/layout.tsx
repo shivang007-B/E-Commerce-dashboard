@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter, usePathname } from "next/navigation";
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
-import { FiHome, FiShoppingBag, FiPackage, FiLogOut } from "react-icons/fi";
+import { FiHome, FiShoppingBag, FiPackage, FiLogOut, FiGift } from "react-icons/fi";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
     const { data: session, status } = useSession();
@@ -30,6 +30,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             { name: "Dashboard", href: "/admin/dashboard", icon: <FiHome /> },
             { name: "Products", href: "/admin/products", icon: <FiShoppingBag /> },
             { name: "Orders", href: "/admin/orders", icon: <FiPackage /> },
+            { name: "Gamification", href: "/admin/gamification", icon: <FiGift /> },
         ];
 
         return (

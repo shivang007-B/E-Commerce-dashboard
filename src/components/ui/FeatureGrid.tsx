@@ -1,41 +1,61 @@
 import React from 'react';
+import Link from 'next/link';
 
 export const FeatureGrid = () => (
-    <section className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 lg:p-8 bg-black/40 rounded-3xl border border-white/10 mb-16">
-        {/* Large Hero Feature */}
-        <div className="md:col-span-2 md:row-span-2 bg-zinc-900 rounded-3xl p-8 border border-white/5 relative overflow-hidden group">
-            <h2 className="text-4xl md:text-5xl font-black text-white z-10 relative italic tracking-tighter">NEW LOOT DROPPED</h2>
-            <p className="text-zinc-400 font-mono text-sm mt-4 z-10 relative">Upgrade your battle station with next-gen peripherals engineered for ultimate performance and zero latency.</p>
+    <section className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6 lg:p-8 rounded-[32px] glass mb-16">
+        {/* Hero Feature */}
+        <div className="md:col-span-2 md:row-span-2 rounded-3xl p-8 glass relative overflow-hidden group gradient-border">
+            <p className="text-fuchsia-400 text-xs uppercase tracking-widest mb-3 z-10 relative font-medium">🎮 Gamified Shopping</p>
+            <h2 className="text-4xl md:text-5xl font-black text-white z-10 relative tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
+                PLAY. SHOP.<br />
+                <span className="gaming-gradient-text">LEVEL UP.</span>
+            </h2>
+            <p className="text-slate-400 text-sm mt-4 z-10 relative leading-relaxed">
+                Every purchase earns XP. Climb the ranks from Rookie to Elite. Unlock exclusive rewards along the way.
+            </p>
 
-            <button className="mt-8 rounded-sm relative z-10 border border-[var(--neon-pink)] px-6 py-2 text-xs font-black uppercase tracking-widest text-[var(--neon-pink)] hover:bg-[var(--neon-pink)] hover:text-white transition-all duration-300">
-                Commence Raid
-            </button>
+            <Link href="/rewards" className="mt-8 relative z-10 inline-block btn-magnetic px-6 py-3 text-xs">
+                Enter Rewards Hub →
+            </Link>
 
-            <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--neon-pink)] opacity-20 blur-[100px] rounded-full transition-transform duration-700 group-hover:scale-150" />
+            <div className="absolute top-0 right-0 w-72 h-72 bg-indigo-500 opacity-10 blur-[120px] rounded-full transition-transform duration-700 group-hover:scale-150" />
         </div>
 
-        {/* Small Bento Boxes */}
-        <div className="bg-zinc-900/50 backdrop-blur-sm rounded-3xl p-6 border border-white/5 relative overflow-hidden group">
-            <p className="text-[var(--neon-cyan)] font-mono text-xs uppercase tracking-widest mb-2">RANK UP</p>
-            <h3 className="text-xl font-bold text-white tracking-tight uppercase">Elite Membership</h3>
-            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-[var(--neon-cyan)] opacity-10 blur-2xl rounded-full transition-transform duration-500 group-hover:scale-150" />
-        </div>
+        {/* Spin & Win */}
+        <Link href="/rewards#spin" className="rounded-3xl p-6 glass relative overflow-hidden group hover:border-sky-500/20 transition-all">
+            <div className="text-3xl mb-2 animate-float">🎡</div>
+            <p className="text-sky-400 text-xs uppercase tracking-widest mb-2 font-medium">Spin & Win</p>
+            <h3 className="text-lg font-bold text-white tracking-tight">Daily Wheel</h3>
+            <p className="text-[10px] text-slate-500 mt-1">Win XP, discounts & more</p>
+            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-sky-500 opacity-5 blur-2xl rounded-full transition-transform duration-500 group-hover:scale-150" />
+        </Link>
 
-        <div className="bg-zinc-900/50 backdrop-blur-sm rounded-3xl p-6 border border-white/5 relative overflow-hidden group">
-            <p className="text-[var(--neon-pink)] font-mono text-xs uppercase tracking-widest mb-2">SPEED RUN</p>
-            <h3 className="text-xl font-bold text-white tracking-tight uppercase">24h Delivery</h3>
-            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-[var(--neon-pink)] opacity-10 blur-2xl rounded-full transition-transform duration-500 group-hover:scale-150" />
-        </div>
+        {/* Leaderboard */}
+        <Link href="/rewards#leaderboard" className="rounded-3xl p-6 glass relative overflow-hidden group hover:border-fuchsia-500/20 transition-all">
+            <div className="text-3xl mb-2">🏆</div>
+            <p className="text-fuchsia-400 text-xs uppercase tracking-widest mb-2 font-medium">Compete</p>
+            <h3 className="text-lg font-bold text-white tracking-tight">Leaderboard</h3>
+            <p className="text-[10px] text-slate-500 mt-1">Climb the ranks</p>
+            <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-fuchsia-500 opacity-5 blur-2xl rounded-full transition-transform duration-500 group-hover:scale-150" />
+        </Link>
 
-        <div className="md:col-span-2 bg-gradient-to-br from-zinc-900 to-[#111] backdrop-blur-sm rounded-3xl p-6 border border-white/5 relative overflow-hidden flex items-center justify-between group">
+        {/* Missions Banner */}
+        <div className="md:col-span-2 rounded-3xl p-6 glass relative overflow-hidden flex items-center justify-between group">
             <div>
-                <p className="text-[var(--neon-purple)] font-mono text-xs uppercase tracking-widest mb-2">ACHIEVEMENT UNLOCKED</p>
-                <h3 className="text-2xl font-bold text-white tracking-tight uppercase italic">Free Global Shipping</h3>
+                <p className="text-yellow-400 text-xs uppercase tracking-widest mb-2 font-medium">🎯 Weekly Missions</p>
+                <h3 className="text-2xl font-bold text-white tracking-tight" style={{ fontFamily: "var(--font-display)" }}>
+                    Complete Quests. Earn Badges.
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">New challenges every week</p>
             </div>
-            <div className="w-12 h-12 rounded-lg bg-[var(--neon-purple)]/20 border border-[var(--neon-purple)]/50 flex items-center justify-center relative z-10">
-                <svg className="w-6 h-6 text-[var(--neon-purple)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <div className="flex gap-2">
+                {["🎯", "🔥", "👑"].map((emoji, i) => (
+                    <div key={i} className="w-12 h-12 rounded-2xl glass flex items-center justify-center text-xl animate-float" style={{ animationDelay: `${i * 0.2}s` }}>
+                        {emoji}
+                    </div>
+                ))}
             </div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-[var(--neon-purple)] opacity-10 blur-[80px] rounded-full" />
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-yellow-400 opacity-5 blur-[80px] rounded-full" />
         </div>
     </section>
 );

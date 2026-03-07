@@ -1,57 +1,57 @@
 "use client";
 import { useCartStore } from "@/store/useCartStore";
+import { useGamificationStore } from "@/store/useGamificationStore";
+import { getProductXP } from "@/lib/gamification";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
+import { Trash2, Minus, Plus, Zap, ArrowLeft } from "lucide-react";
 
 export default function CartPage() {
     const [isClient, setIsClient] = useState(false);
     const { items, removeItem, increaseQuantity, decreaseQuantity, getCartTotal } = useCartStore();
+    const { points } = useGamificationStore();
 
-    useEffect(() => {
-        setIsClient(true);
-    }, []);
+    useEffect(() => { setIsClient(true); }, []);
 
     if (!isClient) {
         return (
-            <div className="min-h-screen bg-[#050505] flex items-center justify-center text-[var(--neon-cyan)] font-mono animate-pulse">
+            <div className="min-h-screen bg-[var(--deep-space)] flex items-center justify-center text-indigo-400 animate-pulse">
                 Initializing Interface...
             </div>
         );
     }
 
+    const totalXP = items.reduce((sum, item) => sum + getProductXP(item.price) * item.quantity, 0);
+    const totalPts = Math.floor(getCartTotal() * 0.05);
+
     return (
-        <div className="min-h-screen bg-[#050505] py-12 px-4 sm:px-6 lg:px-8 font-mono">
-            <div className="max-w-5xl mx-auto pt-16">
-                {/* Header HUD */}
-                <div className="flex items-center justify-between border-b-2 border-[var(--neon-cyan)]/30 pb-6 mb-10">
+        <div className="min-h-screen bg-[var(--deep-space)] py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-[1100px] mx-auto pt-16">
+                {/* Header */}
+                <div className="flex items-center justify-between border-b border-white/5 pb-6 mb-10">
                     <div>
-                        <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white">
+                        <h1 className="text-4xl font-black tracking-tight text-white" style={{ fontFamily: "var(--font-display)" }}>
                             Tactical <span className="gaming-gradient-text">Loadout</span>
                         </h1>
-                        <p className="text-[10px] text-zinc-500 uppercase tracking-[0.3em] mt-1">
-                            Inventory Management // Sector 01
-                        </p>
+                        <p className="text-[10px] text-slate-500 uppercase tracking-[0.3em] mt-1">Inventory Management</p>
                     </div>
                     <div className="text-right">
-                        <p className="text-zinc-500 text-[10px] uppercase">Active Slots</p>
-                        <p className="text-xl font-bold text-[var(--neon-cyan)]">{items.length} / 99</p>
+                        <p className="text-slate-500 text-[10px] uppercase">Active Slots</p>
+                        <p className="text-xl font-bold text-indigo-400 font-mono">{items.length}</p>
                     </div>
                 </div>
 
                 {items.length === 0 ? (
-                    <div className="text-center py-20 border-2 border-dashed border-white/10 rounded-lg">
-                        <p className="text-zinc-500 uppercase tracking-widest mb-6">Your arsenal is empty</p>
-                        <Link
-                            href="/"
-                            className="inline-block border border-[var(--neon-cyan)] px-8 py-3 text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)] hover:text-black transition-all font-black uppercase tracking-tighter"
-                        >
-                            Return to Armory
+                    <div className="text-center py-20 glass rounded-3xl">
+                        <p className="text-slate-500 mb-6">Your arsenal is empty</p>
+                        <Link href="/" className="btn-magnetic px-8 py-3 text-sm inline-block">
+                            <ArrowLeft size={14} className="inline mr-2" /> Return to Armory
                         </Link>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Item List */}
+                        {/* Items */}
                         <div className="lg:col-span-2 space-y-4">
                             <AnimatePresence>
                                 {items.map((item) => (
@@ -60,40 +60,30 @@ export default function CartPage() {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, scale: 0.95 }}
-                                        className="group relative bg-zinc-900/50 border border-white/10 p-4 flex gap-6 hover:border-[var(--neon-cyan)]/50 transition-all"
+                                        transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                                        className="group glass p-4 flex gap-6 rounded-2xl hover:bg-white/[0.04] transition-all"
                                     >
-                                        {/* Item Image Slot */}
-                                        <div className="h-24 w-24 flex-shrink-0 bg-black border border-white/5 overflow-hidden">
+                                        <div className="h-24 w-24 flex-shrink-0 bg-[var(--midnight)] border border-white/5 overflow-hidden rounded-xl">
                                             <img src={item.image} alt={item.name} className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500" />
                                         </div>
 
-                                        {/* Item Details */}
                                         <div className="flex-1 flex flex-col justify-between">
                                             <div className="flex justify-between items-start">
                                                 <div>
-                                                    <h3 className="text-white font-bold uppercase text-sm tracking-tight">{item.name}</h3>
-                                                    <p className="text-[var(--neon-cyan)] text-xs mt-1 font-bold">₹{item.price.toLocaleString('en-IN')}</p>
+                                                    <h3 className="text-white font-bold text-sm">{item.name}</h3>
+                                                    <p className="text-indigo-400 text-xs mt-1 font-bold font-mono">₹{item.price.toLocaleString('en-IN')}</p>
+                                                    <p className="text-[10px] text-slate-500 mt-0.5 flex items-center gap-1"><Zap size={9} /> +{getProductXP(item.price)} XP per item</p>
                                                 </div>
-                                                <button
-                                                    onClick={() => removeItem(item.id)}
-                                                    className="text-zinc-600 hover:text-[var(--neon-pink)] transition-colors text-[10px] uppercase font-black"
-                                                >
-                                                    [ Discard ]
+                                                <button onClick={() => removeItem(item.id)} className="text-slate-600 hover:text-red-400 transition-colors p-1">
+                                                    <Trash2 size={14} />
                                                 </button>
                                             </div>
 
-                                            {/* Quantity Selector HUD */}
                                             <div className="flex items-center gap-4 mt-4">
-                                                <div className="flex items-center border border-white/10 bg-black overflow-hidden">
-                                                    <button
-                                                        onClick={() => decreaseQuantity(item.id)}
-                                                        className="px-3 py-1 text-zinc-400 hover:bg-white/10 hover:text-white"
-                                                    >-</button>
-                                                    <span className="px-4 py-1 text-xs text-[var(--neon-cyan)] border-x border-white/10">{item.quantity}</span>
-                                                    <button
-                                                        onClick={() => increaseQuantity(item.id)}
-                                                        className="px-3 py-1 text-zinc-400 hover:bg-white/10 hover:text-white"
-                                                    >+</button>
+                                                <div className="flex items-center glass overflow-hidden rounded-xl">
+                                                    <button onClick={() => decreaseQuantity(item.id)} className="px-3 py-1.5 text-slate-400 hover:bg-white/5 hover:text-white"><Minus size={14} /></button>
+                                                    <span className="px-4 py-1.5 text-xs text-indigo-400 border-x border-white/5 font-mono">{item.quantity}</span>
+                                                    <button onClick={() => increaseQuantity(item.id)} className="px-3 py-1.5 text-slate-400 hover:bg-white/5 hover:text-white"><Plus size={14} /></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -102,43 +92,45 @@ export default function CartPage() {
                             </AnimatePresence>
                         </div>
 
-                        {/* Summary Panel (The "Transaction Terminal") */}
+                        {/* Summary */}
                         <div className="lg:col-span-1">
-                            <div className="sticky top-24 bg-zinc-900 border-2 border-[var(--neon-cyan)] p-6 relative">
-                                <div className="absolute top-0 right-0 h-4 w-4 border-t-2 border-r-2 border-[var(--neon-cyan)]" />
-                                <div className="absolute bottom-0 left-0 h-4 w-4 border-b-2 border-l-2 border-[var(--neon-cyan)]" />
+                            <div className="sticky top-24 glass-strong p-6 rounded-3xl gradient-border">
+                                <h2 className="text-xl font-black text-white mb-6" style={{ fontFamily: "var(--font-display)" }}>Summary</h2>
 
-                                <h2 className="text-xl font-black uppercase text-white mb-6 italic">Terminal_Summary</h2>
-
-                                <div className="space-y-3 mb-8 text-xs uppercase tracking-widest">
-                                    <div className="flex justify-between text-zinc-500">
+                                <div className="space-y-3 mb-6 text-xs uppercase tracking-widest">
+                                    <div className="flex justify-between text-slate-500">
                                         <span>Subtotal</span>
-                                        <span>₹{getCartTotal().toLocaleString('en-IN')}</span>
+                                        <span className="font-mono">₹{getCartTotal().toLocaleString('en-IN')}</span>
                                     </div>
-                                    <div className="flex justify-between text-zinc-500">
+                                    <div className="flex justify-between text-slate-500">
                                         <span>Tax (GST)</span>
-                                        <span>₹0.00</span>
+                                        <span className="font-mono">₹0.00</span>
                                     </div>
-                                    <div className="h-px bg-white/10 my-4" />
+                                    <div className="h-px bg-white/5 my-4" />
                                     <div className="flex justify-between items-end">
-                                        <span className="text-white font-black">Final Credits</span>
-                                        <span className="text-2xl font-black text-[var(--neon-pink)] shadow-[var(--neon-pink)] drop-shadow-md">
-                                            ₹{getCartTotal().toLocaleString('en-IN')}
-                                        </span>
+                                        <span className="text-white font-black">Total</span>
+                                        <span className="text-2xl font-black text-indigo-400 font-mono">₹{getCartTotal().toLocaleString('en-IN')}</span>
                                     </div>
                                 </div>
 
-                                <Link
-                                    href="/checkout"
-                                    className="block w-full text-center bg-[var(--neon-cyan)] text-black font-black py-4 uppercase tracking-[0.2em] hover:bg-white transition-all transform hover:-translate-y-1 active:translate-y-0"
-                                    style={{ clipPath: 'polygon(0 0, 90% 0, 100% 30%, 100% 100%, 10% 100%, 0 70%)' }}
-                                >
+                                {/* XP Preview */}
+                                <div className="mb-4 p-3 rounded-2xl bg-indigo-500/5 border border-indigo-500/10">
+                                    <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-2">Rewards from this order</p>
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-indigo-400 font-bold font-mono"><Zap size={12} className="inline" /> +{totalXP} XP</span>
+                                        <span className="text-yellow-400 font-bold font-mono">💎 +{totalPts} pts</span>
+                                    </div>
+                                </div>
+
+                                {points > 0 && (
+                                    <div className="mb-6 p-3 rounded-2xl bg-yellow-400/5 border border-yellow-400/10">
+                                        <p className="text-[10px] text-slate-400">💎 You have {points} points to redeem at checkout</p>
+                                    </div>
+                                )}
+
+                                <Link href="/checkout" className="btn-magnetic block w-full text-center py-4 text-sm">
                                     Initiate Checkout
                                 </Link>
-
-                                <p className="text-[8px] text-zinc-600 text-center mt-6 uppercase leading-relaxed">
-                                    Notice: All transactions are logged by central command. Unauthorized credits will result in account suspension.
-                                </p>
                             </div>
                         </div>
                     </div>
